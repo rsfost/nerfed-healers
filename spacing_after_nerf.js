@@ -20,7 +20,13 @@ function calcHealerDeath(wave, ticks, spawn, reds, splash, verbose) {
             func(arr[i], arr[i+1]);
         }
     };
-    const appendNaturalTicks = (manualTime1, manualTime2) => {
+
+    const appendTicks = (manualTime1, manualTime2) => {
+        poisonTicks.pushTick(manualTime1, 4, 'manual');
+        if (manualTime2 - manualTime1 < 3) {
+            return;
+        }
+
         let time = manualTime1 + 3;
         let count = 0;
         for (; time <= manualTime2; time += 3, ++count) {
@@ -32,14 +38,8 @@ function calcHealerDeath(wave, ticks, spawn, reds, splash, verbose) {
         }
     };
 
-    forEachPair(ticks, (currentTime, nextTime) => {
-        poisonTicks.pushTick(currentTime, 4, 'manual');
-        if (nextTime - currentTime >= 3) {
-            appendNaturalTicks(currentTime, nextTime);
-        }
-    });
-    poisonTicks.pushTick(ticks[ticks.length - 1], 4, 'manual');
-    appendNaturalTicks(ticks[ticks.length - 1], Infinity);
+    forEachPair([...ticks, Infinity], (currentTime, nextTime) =>
+        appendTicks(currentTime, nextTime));
 
     console.log(poisonTicks);
 }
