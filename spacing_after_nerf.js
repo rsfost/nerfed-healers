@@ -12,6 +12,11 @@ Array.prototype.pushTick = function(time, damage, type) {
 };
 function calcHealerDeath(wave, ticks, spawn, reds, splash, verbose) {
     const waveHps = [27, 32, 37, 43, 49, 55, 60, 67, 76, 60];
+    const poisonTicks = [];
+
+    if (!spawn) {
+        spawn = poisonTicks[0].time - 3;
+    }
 
     const forEachPair = (arr, func) => {
         for (let i = 0; i < arr.length - 1; ++i) {
@@ -19,7 +24,6 @@ function calcHealerDeath(wave, ticks, spawn, reds, splash, verbose) {
         }
     };
 
-    const poisonTicks = [];
     const appendTicks = (manualTime1, manualTime2) => {
         poisonTicks.pushTick(manualTime1, 4, 'manual');
         if (manualTime2 - manualTime1 < 3) {
@@ -37,30 +41,33 @@ function calcHealerDeath(wave, ticks, spawn, reds, splash, verbose) {
         }
     };
 
+    const calcDeathTime = () => {
+        const startingHp =  waveHps[wave - 1];
+        const effectiveStartingHp = startingHp - reds * 3 - splash;
+        let lastRegenTime = spawn;
+        let hp = effectiveStartingHp;
+        let lastPoisonTick;
+        for (let i = 0; hp > 0 && i < poisonTicks.length; ++i) {
+            const poisonTick = poisonTicks[i];
+            const regen = Math.floor((poisonTick.time - lastRegenTime) / 60);
+            hp = Math.min(hp + regen, startingHp);
+            lastRegenTime += 60 * regen;
+            hp -= poisonTick.damage;
+            lastPoisonTick = poisonTick;
+        }
+        if (hp <= 0) {
+            return lastPoisonTick.time + 0.6;
+        } else {
+            return 0;
+        }
+    };
+
     forEachPair([...ticks, Infinity], (currentTime, nextTime) =>
         appendTicks(currentTime, nextTime));
+    const deathTime = calcDeathTime();
 
-    console.log(poisonTicks);
-
-    const startingHp =  waveHps[wave - 1];
-    const effectiveStartingHp = startingHp - reds * 3 - splash;
-    if (!spawn) {
-        spawn = poisonTicks[0].time - 3;
-    }
-    let lastRegenTime = spawn;
-    let hp = effectiveStartingHp;
-    let lastPoisonTick;
-    for (let i = 0; hp > 0 && i < poisonTicks.length; ++i) {
-        const poisonTick = poisonTicks[i];
-        const regen = Math.floor((poisonTick.time - lastRegenTime) / 60);
-        hp = Math.min(hp + regen, startingHp);
-        lastRegenTime += 60 * regen;
-        hp -= poisonTick.damage;
-        lastPoisonTick = poisonTick;
-    }
-
-    if (hp <= 0) {
-        console.log('healer dies at ' + (lastPoisonTick.time + 0.6))
+    if (deathTime) {
+        console.log('healer dies at ' + deathTime);
     } else {
         console.log('healer does not die :(');
     }
