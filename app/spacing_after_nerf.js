@@ -66,24 +66,6 @@ export function calcHealerDeath(wave, ticks, spawn, reds, splash, verbose) {
         }
     };
 
-    // e.g., 486 -> '48.6'
-    const formatMillis = (millis) => {
-        millis = Math.floor(millis);
-        const str = millis.toString(10);
-        const pattern = /(\d*)?(\d)/;
-        const groups = pattern.exec(str);
-        let returnValue = '';
-        if (groups) {
-            if (groups[1]) {
-                returnValue += groups[1];
-            } else {
-                returnValue += '0';
-            }
-            returnValue += '.' + groups[2];
-        }
-        return returnValue;
-    }
-
     forEachPair([...ticks, Infinity], (currentTime, nextTime) =>
         appendTicks(currentTime, nextTime));
     const deathTime = calcDeathTime();
