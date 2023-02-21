@@ -1,31 +1,12 @@
 import { calcHealerDeath } from './spacing_after_nerf.js'
 
-// E.g., '12.6x2, 15, 18' --> [126, 132, 150, 180]
-function parseTicksInput(str) {
-    const delim = /,\s*/;
-    const tokenPattern = /^(\d*(?:\.\d)?)(?:x(\d{1,2}))?$/;
-    const tokens = str.split(delim);
-    const returnValue = [];
-    const isValidInput = tokens.every(token => {
-        const groups = tokenPattern.exec(token);
-        if (!groups) {
-            return false;
-        }
-
-        const expander = parseInt(groups[2] || '1');
-        returnValue.push(parseTime(groups[1]));
-        for (let i = 0; i < expander - 1; ++i) {
-            returnValue.push(returnValue[returnValue.length - 1] + 6);
-        }
-        return true;
-    });
-    if (isValidInput && tokens.length > 0) {
-        returnValue.sort();
-        return returnValue;
-    } else {
-        return false;
-    }
-}
+const uiWave = document.getElementById('wave');
+const uiSpawn = document.getElementById('spawn');
+const uiReds = document.getElementById('reds');
+const uiSplash = document.getElementById('splash');
+const uiTicksInput = document.getElementById('ticks');
+const uiInterpretedTicks = document.getElementById('interpretedTicks');
+const uiDeathTime = document.getElementById('deathTime');
 
 function parseTime(str) {
     if (!/\d*\.\d/.test(str)) {
@@ -54,25 +35,65 @@ function formatMillis(millis)  {
     return returnValue;
 }
 
+// E.g., '12.6x2, 15, 18' --> [126, 132, 150, 180]
+function parseTicksInput(str) {
+    const delim = /,\s*/;
+    const tokenPattern = /^(\d+(?:\.\d)?)(?:x(\d{1,2}))?$/;
+    const tokens = str.split(delim);
+    const returnValue = [];
+    const isValidInput = tokens.every(token => {
+        const groups = tokenPattern.exec(token);
+        if (!groups) {
+            return false;
+        }
+
+        const expander = parseInt(groups[2] || '1');
+        returnValue.push(parseTime(groups[1]));
+        for (let i = 0; i < expander - 1; ++i) {
+            returnValue.push(returnValue[returnValue.length - 1] + 6);
+        }
+        return true;
+    });
+    if (isValidInput && tokens.length > 0) {
+        returnValue.sort();
+        return returnValue;
+    } else {
+        return false;
+    }
+}
+
+function userInput() {
+    const wave = parseInt(uiWave.value || '1');
+    const spawn = parseInt(uiSpawn.value || '12');
+    const reds = parseInt(uiReds.value || '0');
+    const splash = parseInt(uiSplash.value || '0');
+    const ticks = parseTicksInput(uiTicksInput.value);
+    return { wave, spawn, reds, splash, ticks };
+}
+
+function update(e) {
+    const params = userInput();
+    if (!params.ticks) {
+        return false;
+    }
+    uiInterpretedTicks.innerText = params.ticks.map(tick => formatMillis(tick)).join(', ');
+    const deathTime = calcHealerDeath(
+        params.wave, params.ticks, params.spawn, params.reds, params.splash, false);
+    if (deathTime) {
+        uiDeathTime.innerText = `Healer dies at: ${formatMillis(deathTime)}`;
+    } else {
+        uiDeathTime.innerText = 'Healer does not die.';
+    }
+    return true;
+}
+
 (() => {
     const history = [];
     let historyPosition = 0;
 
-    const uiTicksInput = document.getElementById('ticksInput');
-    const uiInterpretedTicks = document.getElementById('interpretedTicks');
-    const uiDeathTime = document.getElementById('deathTime');
-
-    uiTicksInput.addEventListener('change', e => {
-        const ticks = parseTicksInput(e.target.value);
-        if (ticks) {
-            uiInterpretedTicks.innerText = ticks.map(tick => formatMillis(tick)).join(', ');
-            const deathTime = calcHealerDeath(5, ticks, 12, 0, 0, false);
-            if (deathTime) {
-                uiDeathTime.innerText = `Healer dies at: ${formatMillis(deathTime)}`;
-            } else {
-                uiDeathTime.innerText = 'Healer does not die.';
-            }
-        }
+    [uiWave, uiSpawn, uiReds, uiSplash, uiTicksInput].forEach(input =>
+        input.addEventListener('input', update));
+    uiTicksInput.addEventListener('input', e => {
         history.push(e.target.value);
         historyPosition = 1;
     });
