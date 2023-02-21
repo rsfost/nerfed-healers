@@ -47,7 +47,7 @@ export function calcHealerDeath(wave, ticks, spawn, reds, splash, verbose) {
 
     const calcDeathTime = () => {
         const startingHp =  waveHps[wave - 1];
-        const effectiveStartingHp = startingHp - reds * 3 - splash;
+        const effectiveStartingHp = startingHp - reds * 30 - splash;
         let lastRegenTime = spawn;
         let hp = effectiveStartingHp;
         let lastPoisonTick;
