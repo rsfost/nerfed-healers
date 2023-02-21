@@ -7,10 +7,14 @@
  * https://discord.com/channels/255528818305925131/371048954583842816/1076395713719701646
  * https://discord.gg/cba
  **/
+
+export const name = "spacing_after_nerf";
+
 Array.prototype.pushTick = function(time, damage, type) {
     return this.push({time, damage, type});
 };
-function calcHealerDeath(wave, ticks, spawn, reds, splash, verbose) {
+
+export function calcHealerDeath(wave, ticks, spawn, reds, splash, verbose) {
     const waveHps = [270, 320, 370, 430, 490, 550, 600, 670, 760, 600];
     const poisonTicks = [];
 
@@ -84,9 +88,5 @@ function calcHealerDeath(wave, ticks, spawn, reds, splash, verbose) {
         appendTicks(currentTime, nextTime));
     const deathTime = calcDeathTime();
 
-    if (deathTime) {
-        console.log('healer dies at ' + formatMillis(deathTime));
-    } else {
-        console.log('healer does not die :(');
-    }
+    return deathTime;
 }
