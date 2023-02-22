@@ -137,4 +137,5 @@ function update(e) {
         e.target.value = history[index];
         e.preventDefault();
     });
+    update();
 })();
