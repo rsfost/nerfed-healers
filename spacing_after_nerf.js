@@ -51,20 +51,25 @@ export function calcHealerDeath(wave, ticks, spawn, reds, splash, verbose) {
         let lastRegenTime = spawn;
         let hp = effectiveStartingHp;
         let lastPoisonTick;
-
+        const trace = [];
         for (let i = 0; hp > 0 && i < poisonTicks.length; ++i) {
             const poisonTick = poisonTicks[i];
             const regen = Math.floor((poisonTick.time - lastRegenTime) / 600);
             hp = Math.min(hp + regen, startingHp);
             lastRegenTime += 600 * regen;
             hp -= poisonTick.damage;
+            if (hp < 0) {
+                hp = 0;
+            }
             lastPoisonTick = poisonTick;
+            trace.push({ ...poisonTick, hp });
         }
+
+        const returnValue = { trace };
         if (hp <= 0) {
-            return lastPoisonTick.time + 6;
-        } else {
-            return 0;
+            returnValue.deathTime = lastPoisonTick.time + 6;
         }
+        return returnValue;
     };
 
     forEachPair([...ticks, Infinity], (currentTime, nextTime) =>

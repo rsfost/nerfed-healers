@@ -79,8 +79,8 @@ function update(e) {
     uiInterpretedTicks.innerText = params.ticks.map(tick => formatMillis(tick)).join(', ');
     const deathTime = calcHealerDeath(
         params.wave, params.ticks, params.spawn, params.reds, params.splash, false);
-    if (deathTime) {
-        uiDeathTime.innerText = `Healer dies at: ${formatMillis(deathTime)}`;
+    if (deathTime.deathTime) {
+        uiDeathTime.innerText = `Healer dies at: ${formatMillis(deathTime.deathTime)}`;
     } else {
         uiDeathTime.innerText = 'Healer does not die.';
     }
