@@ -15,60 +15,67 @@
             <p><em>Death time algorithm by Raki Suta and Solar754.</em></p>
         </header>
         <main class="container m-0 p-0">
-            <div class="row mb-3">
-                <div class="col">
-                    <label for="wave" class="form-label">Wave:</label>
-                    <select name="wave" id="wave" class="form-control">
-                        <option value="1" selected>1</option>
-                        <option value="2">2</option>
-                        <option value="3">3</option>
-                        <option value="4">4</option>
-                        <option value="5">5</option>
-                        <option value="6">6</option>
-                        <option value="7">7</option>
-                        <option value="8">8</option>
-                        <option value="9">9</option>
-                        <option value="10">10</option>
-                    </select>
-                </div>
-                <div class="col">
-                    <label for="spawn" class="form-label">Spawn:</label>
-                    <input type="number" name="spawn" id="spawn" min="0" value="12" class="form-control">
-                </div>
-                <div class="col">
-                    <label for="reds" class="form-label">Reds:</label>
-                    <input type="number" name="reds" id="reds" min="0" value="0" class="form-control">
-                </div>
-                <div class="col">
-                    <label for="splash" class="form-label">Splash:</label>
-                    <input type="number" name="splash" id="splash" min="0" value="0" class="form-control">
-                </div>
-            </div>
             <div class="row">
-                <div class="col">
-                    <label for="ticks" class="form-label">Manual poison times:</label>
-                    <input
-                        type="text"
-                        name="ticks"
-                        id="ticks"
-                        class="form-control"
-                        placeholder="12x6, 26.4">
-                    <div id="interpretedTicks"></div>
+                <!-- Calc params -->
+                <div class="col-md">
+                    <div class="row mb-3">
+                        <div class="col">
+                            <label for="wave" class="form-label">Wave:</label>
+                            <select name="wave" id="wave" class="form-control">
+                                <option value="1" selected>1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                                <option value="5">5</option>
+                                <option value="6">6</option>
+                                <option value="7">7</option>
+                                <option value="8">8</option>
+                                <option value="9">9</option>
+                                <option value="10">10</option>
+                            </select>
+                        </div>
+                        <div class="col">
+                            <label for="spawn" class="form-label">Spawn:</label>
+                            <input type="number" name="spawn" id="spawn" min="0" value="12" class="form-control">
+                        </div>
+                        <div class="col">
+                            <label for="reds" class="form-label">Reds:</label>
+                            <input type="number" name="reds" id="reds" min="0" value="0" class="form-control">
+                        </div>
+                        <div class="col">
+                            <label for="splash" class="form-label">Splash:</label>
+                            <input type="number" name="splash" id="splash" min="0" value="0" class="form-control">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <label for="ticks" class="form-label">Manual poison times:</label>
+                            <input
+                                type="text"
+                                name="ticks"
+                                id="ticks"
+                                class="form-control"
+                                placeholder="12x6, 26.4">
+                            <div id="interpretedTicks"></div>
+                        </div>
+                    </div>
                 </div>
-            </div>
-            <div class="row">
-                <div id="deathTime"></div>
-                <table id="table" class="table">
-                    <thead>
-                        <tr>
-                            <th scope="col">Tick</th>
-                            <th scope="col">Damage</th>
-                            <th scope="col">Type</th>
-                            <th scope="col">HP</th>
-                        </tr>
-                    </thead>
-                    <tbody></tbody>
-                </table>
+
+                <!-- Results -->
+                <div class="col-md">
+                    <div id="deathTime"></div>
+                    <table id="table" class="table">
+                        <thead>
+                            <tr>
+                                <th scope="col">Tick</th>
+                                <th scope="col">Damage</th>
+                                <th scope="col">Type</th>
+                                <th scope="col">HP</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
             </div>
         </main>
     </div>
