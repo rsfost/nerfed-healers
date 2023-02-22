@@ -111,31 +111,6 @@ function update(e) {
     return true;
 }
 
-(() => {
-    const history = [];
-    let historyPosition = 0;
-
-    [uiWave, uiSpawn, uiReds, uiSplash, uiTicksInput].forEach(input =>
-        input.addEventListener('input', update));
-    uiTicksInput.addEventListener('input', e => {
-        history.push(e.target.value);
-        historyPosition = 1;
-    });
-    uiTicksInput.addEventListener('keydown', e => {
-        if (e.key == 'ArrowUp') {
-            historyPosition = Math.min(historyPosition + 1, history.length);
-        } else if (e.key == 'ArrowDown') {
-            historyPosition = Math.max(historyPosition - 1, 0);
-        } else {
-            return;
-        }
-        if (historyPosition <= 0) {
-            e.target.value = '';
-            return;
-        }
-        const index = history.length - historyPosition;
-        e.target.value = history[index];
-        e.preventDefault();
-    });
-    update();
-})();
+[uiWave, uiSpawn, uiReds, uiSplash, uiTicksInput].forEach(input =>
+    input.addEventListener('input', update));
+update();
