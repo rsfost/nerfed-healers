@@ -7,6 +7,7 @@ const uiSplash = document.getElementById('splash');
 const uiTicksInput = document.getElementById('ticks');
 const uiInterpretedTicks = document.getElementById('interpretedTicks');
 const uiDeathTime = document.getElementById('deathTime');
+const uiTable = document.getElementById('table');
 
 function parseTime(str) {
     if (!/\d*\.\d/.test(str)) {
@@ -71,6 +72,28 @@ function userInput() {
     return { wave, spawn, reds, splash, ticks };
 }
 
+function tableCell(text, tag='td') {
+    const td = document.createElement(tag);
+    td.innerText = text;
+    return td;
+}
+
+function generateTable(trace) {
+    const tbody = document.createElement('tbody');
+    trace.forEach(tick => {
+        const tr = document.createElement('tr');
+        if (tick.type == 'manual') {
+            tr.class = 'table-info';
+        }
+        tr.appendChild(tableCell(formatMillis(tick.time.toString()), 'th'));
+        tr.appendChild(tableCell(tick.damage.toString()));
+        tr.appendChild(tableCell(tick.type));
+        tr.appendChild(tableCell(tick.hp.toString()));
+        tbody.appendChild(tr);
+    });
+    uiTable.replaceChild(tbody, uiTable.tBodies[0]);
+}
+
 function update(e) {
     const params = userInput();
     if (!params.ticks) {
@@ -84,6 +107,7 @@ function update(e) {
     } else {
         uiDeathTime.innerText = 'Healer does not die.';
     }
+    generateTable(deathTime.trace);
     return true;
 }
 
