@@ -15,7 +15,7 @@ Array.prototype.pushTick = function(time, damage, type) {
 };
 
 export function calcHealerDeath(wave, ticks, spawn, reds, splash, verbose) {
-    const waveHps = [270, 320, 370, 430, 490, 550, 600, 670, 760, 600];
+    const waveHps = [27, 32, 37, 43, 49, 55, 60, 67, 76, 60];
     const poisonTicks = [];
 
     if (!spawn) {
@@ -29,7 +29,7 @@ export function calcHealerDeath(wave, ticks, spawn, reds, splash, verbose) {
     };
 
     const appendTicks = (manualTime1, manualTime2) => {
-        poisonTicks.pushTick(manualTime1, 40, 'manual');
+        poisonTicks.pushTick(manualTime1, 4, 'manual');
         if (manualTime2 - manualTime1 < 30) {
             return;
         }
@@ -37,7 +37,7 @@ export function calcHealerDeath(wave, ticks, spawn, reds, splash, verbose) {
         let time = manualTime1 + 30;
         let count = 0;
         for (; time <= manualTime2; time += 30, ++count) {
-            const dmg = Math.max(0, 40 - 10*Math.floor(count / 5));
+            const dmg = Math.max(0, 4 - Math.floor(count / 5));
             if (dmg <= 0) {
                 break;
             }
@@ -47,15 +47,16 @@ export function calcHealerDeath(wave, ticks, spawn, reds, splash, verbose) {
 
     const calcDeathTime = () => {
         const startingHp =  waveHps[wave - 1];
-        const effectiveStartingHp = startingHp - reds * 30 - splash;
+        const effectiveStartingHp = startingHp - reds * 3 - splash;
         let lastRegenTime = spawn;
         let hp = effectiveStartingHp;
         let lastPoisonTick;
+
         for (let i = 0; hp > 0 && i < poisonTicks.length; ++i) {
             const poisonTick = poisonTicks[i];
-            const regen = 10*Math.floor((poisonTick.time - lastRegenTime) / 600);
+            const regen = Math.floor((poisonTick.time - lastRegenTime) / 600);
             hp = Math.min(hp + regen, startingHp);
-            lastRegenTime += 60 * regen;
+            lastRegenTime += 600 * regen;
             hp -= poisonTick.damage;
             lastPoisonTick = poisonTick;
         }
