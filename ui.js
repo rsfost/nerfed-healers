@@ -82,8 +82,10 @@ function generateTable(trace) {
     const tbody = document.createElement('tbody');
     trace.forEach(tick => {
         const tr = document.createElement('tr');
-        if (tick.type == 'manual') {
-            tr.class = 'table-info';
+        if (tick.type == 'natural') {
+
+        } else {
+            tr.classList.add('text-primary-emphasis');
         }
         tr.appendChild(tableCell(formatMillis(tick.time.toString()), 'th'));
         tr.appendChild(tableCell(tick.damage.toString()));
