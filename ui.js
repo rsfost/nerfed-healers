@@ -22,7 +22,7 @@ function parseTime(str) {
 function formatMillis(millis)  {
     millis = Math.floor(millis);
     const str = millis.toString(10);
-    const pattern = /(\d*)?(\d)/;
+    const pattern = /(\d+)?(\d)/;
     const groups = pattern.exec(str);
     let returnValue = '';
     if (groups) {
