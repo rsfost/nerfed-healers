@@ -65,7 +65,7 @@ function parseTicksInput(str) {
 
 function userInput() {
     const wave = parseInt(uiWave.value || '1');
-    const spawn = parseInt(uiSpawn.value || '12');
+    const spawn = Math.floor(parseFloat(uiSpawn.value || '6') * 10);
     const reds = parseInt(uiReds.value || '0');
     const splash = parseInt(uiSplash.value || '0');
     const ticks = parseTicksInput(uiTicksInput.value);
