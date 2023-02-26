@@ -49,14 +49,20 @@ function parseTicksInput(str) {
         }
 
         const expander = parseInt(groups[2] || '1');
-        returnValue.push(parseTime(groups[1]));
+        returnValue.push({
+            time: parseTime(groups[1]),
+            isExpanded: false
+        });
         for (let i = 0; i < expander - 1; ++i) {
-            returnValue.push(returnValue[returnValue.length - 1] + 6);
+            returnValue.push({
+                time: returnValue[returnValue.length - 1].time + 6,
+                isExpanded: true
+            });
         }
         return true;
     });
     if (isValidInput && tokens.length > 0) {
-        returnValue.sort();
+        returnValue.sort((a, b) => a.time - b.time);
         return returnValue;
     } else {
         return false;
@@ -96,14 +102,50 @@ function generateTable(trace) {
     uiTable.replaceChild(tbody, uiTable.tBodies[0]);
 }
 
+// I really don't like this implementation. I should really use a frontend library :\
+function generateTicksInterpretation(ticks) {
+    let html = '';
+    let prevTag;
+
+    if (!ticks || ticks.length <= 0) {
+        uiInterpretedTicks.innerText = '';
+    }
+
+    const appendTickHtml = (tick) => {
+        let tag;
+        if (tick.isExpanded) {
+            tag = 'span';
+        }
+        if (tag !== prevTag) {
+            if (prevTag) {
+                html += `</${prevTag}>`;
+            }
+            if (tag) {
+                html += `<${tag} class="text-body-tertiary">`;
+            }
+        }
+        html += formatMillis(tick.time);
+        prevTag = tag;
+    };
+
+    appendTickHtml(ticks[0]);
+    for (let i = 1; i < ticks.length; ++i) {
+        html += ', ';
+        appendTickHtml(ticks[i]);
+    }
+    uiInterpretedTicks.innerHTML = html;
+}
+
 function update(e) {
     const params = userInput();
     if (!params.ticks) {
         return false;
     }
-    uiInterpretedTicks.innerText = params.ticks.map(tick => formatMillis(tick)).join(', ');
+    generateTicksInterpretation(params.ticks);
+
+    const tickTimes = params.ticks.map(tick => tick.time);
     const deathTime = calcHealerDeath(
-        params.wave, params.ticks, params.spawn, params.reds, params.splash, false);
+        params.wave, tickTimes, params.spawn, params.reds, params.splash, false);
     if (deathTime.deathTime) {
         uiDeathTime.innerText = `Healer dies at: ${formatMillis(deathTime.deathTime)}`;
     } else {
