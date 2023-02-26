@@ -67,7 +67,9 @@ export function calcHealerDeath(wave, ticks, spawn, reds, splash, verbose) {
 
         const returnValue = { trace };
         if (hp <= 0) {
-            returnValue.deathTime = lastPoisonTick.time + 6;
+            // Handle the silly case that reds or splash is a big number.
+            const finalTick = (lastPoisonTick || { time: spawn }).time;
+            returnValue.deathTime = finalTick + 6;
         }
         return returnValue;
     };
